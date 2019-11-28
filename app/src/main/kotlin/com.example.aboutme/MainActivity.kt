@@ -5,22 +5,30 @@ import android.os.Bundle
 import android.view.View
 import android.view.inputmethod.InputMethodManager
 import androidx.appcompat.app.AppCompatActivity
-import kotlinx.android.synthetic.main.activity_main.*
+import androidx.databinding.DataBindingUtil
+import com.example.aboutme.databinding.ActivityMainBinding
 
 class MainActivity : AppCompatActivity() {
 
+    private lateinit var binding: ActivityMainBinding
+
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        setContentView(R.layout.activity_main)
+//        setContentView(R.layout.activity_main)
+        binding = DataBindingUtil.setContentView(this, R.layout.activity_main)
 
-        done_button.setOnClickListener(::addNickname)
+        binding.doneButton.setOnClickListener(::addNickname)
     }
 
     private fun addNickname(view: View) {
-        nickname_edit.let {
-            nickname_text.text = it.text.toString()
-            it.visibility = View.GONE
-            nickname_text.visibility = View.VISIBLE
+        binding.apply {
+            // Omitting this invalidateAll() as I don't understand why this is needed here
+//            invalidateAll()
+            nicknameEdit.let {
+                nicknameText.text = it.text.toString()
+                it.visibility = View.GONE
+                nicknameText.visibility = View.VISIBLE
+            }
         }
         view.visibility = View.GONE
 
