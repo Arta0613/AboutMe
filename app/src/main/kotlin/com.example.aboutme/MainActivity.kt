@@ -2,31 +2,43 @@ package com.example.aboutme
 
 import android.content.Context
 import android.os.Bundle
+import android.os.IBinder
 import android.view.View
 import android.view.inputmethod.InputMethodManager
 import androidx.appcompat.app.AppCompatActivity
-import kotlinx.android.synthetic.main.activity_main.*
+import androidx.databinding.DataBindingUtil
+import com.example.aboutme.databinding.ActivityMainBinding
 
 class MainActivity : AppCompatActivity() {
 
+    private lateinit var binding: ActivityMainBinding
+    private val myName = MyName("Arman")
+
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        setContentView(R.layout.activity_main)
-
-        done_button.setOnClickListener(::addNickname)
+        binding = DataBindingUtil.setContentView(this, R.layout.activity_main)
+        binding.myName = myName
+        binding.doneButton.setOnClickListener(::addNickname)
     }
 
     private fun addNickname(view: View) {
-        nickname_edit.let {
-            nickname_text.text = it.text.toString()
-            it.visibility = View.GONE
-            nickname_text.visibility = View.VISIBLE
+        binding.apply {
+            // View is not updated if invalidate isn't called
+            invalidateAll()
+            nicknameEdit.let {
+                myName?.nickname = it.text.toString()
+                it.visibility = View.GONE
+                nicknameText.visibility = View.VISIBLE
+            }
         }
         view.visibility = View.GONE
 
         // Hide the keyboard
-        val inputMethodManager =
-            getSystemService(Context.INPUT_METHOD_SERVICE) as InputMethodManager
-        inputMethodManager.hideSoftInputFromWindow(view.windowToken, 0)
+        hideKeyboard(view.windowToken)
     }
+}
+
+private fun Context.hideKeyboard(windowToken: IBinder) {
+    (getSystemService(Context.INPUT_METHOD_SERVICE) as InputMethodManager)
+        .hideSoftInputFromWindow(windowToken, 0)
 }
